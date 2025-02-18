@@ -1,8 +1,11 @@
-
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
-
 public class DeckNewScript : MonoBehaviour
 {
+    public Sprite[] cardSprites;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
