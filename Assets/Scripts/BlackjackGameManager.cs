@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using TMPro;
 
 public class BlackjackGameManager : MonoBehaviour
 {
@@ -11,13 +12,13 @@ public class BlackjackGameManager : MonoBehaviour
     [SerializeField] Button betButton;
     [SerializeField] Button doubleButton;
     [SerializeField] Button splitButton;
-    
+
     [Header("Textos")]
-    [SerializeField] Text scoreText;
-    [SerializeField] Text dealerScoreText;
-    [SerializeField] Text betsText;
-    [SerializeField] Text cashText;
-    [SerializeField] Text mainText;
+    [SerializeField] TextMeshProUGUI scoreText;
+    [SerializeField] TextMeshProUGUI dealerScoreText;
+    [SerializeField] TextMeshProUGUI betsText;
+    [SerializeField] TextMeshProUGUI cashText;
+    [SerializeField] TextMeshProUGUI mainText;
     
     [Header("Juego")]
     [SerializeField] PlayerScript playerScript;

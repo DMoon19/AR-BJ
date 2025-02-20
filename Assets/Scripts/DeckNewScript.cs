@@ -26,7 +26,7 @@ public class DeckNewScript : MonoBehaviour
         deckValues.Clear();
         discardedCards.Clear();
 
-        for (int deckCount = 0; deckCount < 8; deckCount++) 
+        for (int deckCount = 0; deckCount <= 8; deckCount++) 
         {
             foreach (var sprite in normalCardSprites) { deckSprites.Add(sprite); deckValues.Add(GetValueFromSprite(sprite)); }
             foreach (var sprite in JKQCardSprites) { deckSprites.Add(sprite); deckValues.Add(10); }
