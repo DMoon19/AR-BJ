@@ -7,8 +7,7 @@ public class PlayerScript : MonoBehaviour
     // --- This script is for BOTH player and dealer
 
     // Get other scripts
-    public CardScript cardScript;   
-    public DeckScript deckScript;
+    public DeckNewScript deckScript;
 
     // Total value of player/dealer's hand
     public int handValue = 0;
@@ -32,18 +31,30 @@ public class PlayerScript : MonoBehaviour
     // Add a hand to the player/dealer's hand
     public int GetCard()
     {
-        // Get a card, use deal card to assign sprite and value to card on table
+        // Get a card, use deal card to assign texture and value
         int cardValue = deckScript.DealCard(hand[cardIndex].GetComponent<CardScript>());
+
+        // Assign texture to material
+        Renderer cardRenderer = hand[cardIndex].GetComponent<Renderer>();
+        if (cardRenderer != null && cardRenderer.materials.Length > 1)
+        {
+            // El material 1 es el de la carta, el 0 es el dorso
+            cardRenderer.materials[1].mainTexture = hand[cardIndex].GetComponent<CardScript>().GetCardTexture();
+        }
+
         // Show card on game screen
-        hand[cardIndex].GetComponent<Renderer>().enabled = true;
+        cardRenderer.enabled = true;
+
         // Add card value to running total of the hand
         handValue += cardValue;
+
         // If value is 1, it is an ace
-        if(cardValue == 1)
+        if (cardValue == 1)
         {
             aceList.Add(hand[cardIndex].GetComponent<CardScript>());
         }
-        // Cehck if we should use an 11 instead of a 1
+
+        // Check if we should use an 11 instead of a 1
         AceCheck();
         cardIndex++;
         return handValue;
@@ -52,15 +63,16 @@ public class PlayerScript : MonoBehaviour
     // Search for needed ace conversions, 1 to 11 or vice versa
     public void AceCheck()
     {
-        // for each ace in the lsit check
+        // for each ace in the list check
         foreach (CardScript ace in aceList)
         {
-            if(handValue + 10 < 22 && ace.GetValueOfCard() == 1)
+            if (handValue + 10 < 22 && ace.GetValueOfCard() == 1)
             {
                 // if converting, adjust card object value and hand
                 ace.SetValue(11);
                 handValue += 10;
-            } else if (handValue > 21 && ace.GetValueOfCard() == 11)
+            }
+            else if (handValue > 21 && ace.GetValueOfCard() == 11)
             {
                 // if converting, adjust gameobject value and hand value
                 ace.SetValue(1);
@@ -84,13 +96,19 @@ public class PlayerScript : MonoBehaviour
     // Hides all cards, resets the needed variables
     public void ResetHand()
     {
-        for(int i = 0; i < hand.Length; i++)
+        for (int i = 0; i < hand.Length; i++)
         {
-            hand[i].GetComponent<CardScript>().ResetCard();
-            hand[i].GetComponent<Renderer>().enabled = false;
+            Renderer cardRenderer = hand[i].GetComponent<Renderer>();
+            if (cardRenderer != null && cardRenderer.materials.Length > 1)
+            {
+                // Se asigna la textura del dorso en lugar de usar ResetCard()
+                cardRenderer.materials[1].mainTexture = GameObject.Find("Deck").GetComponent<DeckNewScript>().GetCardBack();
+            }
+            cardRenderer.enabled = false;
         }
+
         cardIndex = 0;
         handValue = 0;
-        aceList = new List<CardScript>();
+        aceList.Clear();
     }
 }
