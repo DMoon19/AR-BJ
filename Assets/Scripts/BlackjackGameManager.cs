@@ -46,8 +46,8 @@ public class BlackjackGameManager : MonoBehaviour
         playerScript.ResetHand();
         dealerScript.ResetHand();
         deckScript.Shuffle();
-        playerScript.StartHand();
-        dealerScript.StartHand();
+        //playerScript.StartHand();
+        //dealerScript.StartHand();
 
         scoreText.text = "Jugador: " + playerScript.handValue;
         dealerScoreText.text = "Dealer: " + dealerScript.handValue;
@@ -61,7 +61,7 @@ public class BlackjackGameManager : MonoBehaviour
 
     void HitClicked()
     {
-        playerScript.GetCard();
+        //playerScript.GetCard();
         scoreText.text = "Jugador: " + playerScript.handValue;
         if (playerScript.handValue > 21) RoundOver();
     }
@@ -75,9 +75,9 @@ public class BlackjackGameManager : MonoBehaviour
 
     void HitDealer()
     {
-        while (dealerScript.handValue < 17)
+        while (dealerScript.handValue <= 17)
         {
-            dealerScript.GetCard();
+            //dealerScript.GetCard();
         }
         dealerScoreText.text = "Dealer: " + dealerScript.handValue;
         RoundOver();

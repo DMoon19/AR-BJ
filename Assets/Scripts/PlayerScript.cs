@@ -7,13 +7,9 @@ public class PlayerScript : MonoBehaviour
 
     [SerializeField] private DeckNewScript deckScript;
     [SerializeField] private int money = 1000;
-
-    [Header("Cartas ")]
-    [SerializeField] private List<GameObject> playerCards;
-    [SerializeField] private List<GameObject> hitCards;
-    [SerializeField] private List<GameObject> dealerInitialCards;
     
-
+    [SerializeField] GameObject cardPrefab;
+    [SerializeField] private float distanceBetweenCards;
 
     public int handValue = 0;
     public GameObject[] hand;
@@ -22,15 +18,17 @@ public class PlayerScript : MonoBehaviour
 
     List<CardScript> aceList = new List<CardScript>();
 
-    public void StartHand()
+    public void PlayerStartHand()
     {
 
-        GetCard();
-        GetCard();
+        PlayerGetCard();
+        PlayerGetCard();
     }
 
-    public int GetCard()
+    public int PlayerGetCard()
     {
+        Vector3 newPosition = new Vector3(transform.position.x + distanceBetweenCards, transform.position.y, transform.position.z);
+        GameObject newCard = Instantiate(cardPrefab, newPosition, transform.rotation);
         int cardValue = deckScript.DealCard(hand[cardIndex].GetComponent<CardScript>());
 
         Renderer cardRenderer = hand[cardIndex].GetComponent<Renderer>();

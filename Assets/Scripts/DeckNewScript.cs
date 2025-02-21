@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class DeckNewScript : MonoBehaviour
 {
+    [Header("Sprites de Cartas")]
     [SerializeField] private Sprite[] normalCardSprites;
     [SerializeField] private Sprite[] asesSprites;
     [SerializeField] private Sprite[] JKQCardSprites;
+    
+    [Header("Cantidad de Barajas")]
+    [SerializeField] private int decks;
 
     private List<Sprite> deckSprites = new List<Sprite>(); 
     private List<int> deckValues = new List<int>();
@@ -22,11 +26,12 @@ public class DeckNewScript : MonoBehaviour
 
     void InitializeDeck()
     {
+        //int cardsAmount = 52*decks;
         deckSprites.Clear();
         deckValues.Clear();
         discardedCards.Clear();
 
-        for (int deckCount = 0; deckCount <= 8; deckCount++) 
+        for (int deckCount = 0; deckCount < decks; deckCount++) 
         {
             foreach (var sprite in normalCardSprites) { deckSprites.Add(sprite); deckValues.Add(GetValueFromSprite(sprite)); }
             foreach (var sprite in JKQCardSprites) { deckSprites.Add(sprite); deckValues.Add(10); }

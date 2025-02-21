@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6139790876847809175
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1252729255695228875}
+  - component: {fileID: 2299281000525074579}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1252729255695228875
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6139790876847809175}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2299281000525074579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6139790876847809175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95b44b5e31c582245ba486f9c5b0ea98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startButton: {fileID: 0}
+  dealButton: {fileID: 0}
+  hitButton: {fileID: 0}
+  standButton: {fileID: 0}
+  betButton: {fileID: 0}
+  doubleButton: {fileID: 0}
+  splitButton: {fileID: 0}
+  scoreText: {fileID: 0}
+  dealerScoreText: {fileID: 0}
+  cashText: {fileID: 0}
+  mainText: {fileID: 0}
+  cardScript: {fileID: -3739567100742820574, guid: cc4a823f13725f144933575edaea18b6,
+    type: 3}
+  deckScript: {fileID: 5428462153431591730, guid: b6980e1d22ecd0247a4d9ffb555c4689,
+    type: 3}
+  startMoney: 1000
+  moneyLeft: 0
+  currentBet: 200
+  cardPrefab: {fileID: 976782359435619936, guid: cc4a823f13725f144933575edaea18b6,
+    type: 3}
+  playerHandValue: 0
+  dealerHandValue: 0
+  distanceBetweenCards: 0
+  playerCardSpawn: {fileID: 0}
+  dealerCardSpawn: {fileID: 0}
+  timeBetweenMessages: 1

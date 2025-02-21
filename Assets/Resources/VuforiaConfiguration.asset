@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: VuforiaConfiguration
   m_EditorClassIdentifier: 
   vuforia:
-    vuforiaLicenseKey: Afj8XKf/////AAABmX8VNJkb90Hjqdh6Y25ld7ZK1hFnJMcBIiWgmxgvcj3HM7vjfLgNIXh7sy4NdQGfsIE1zIndZF0c2QfYb8u79hiHoQs3ewzij2DXcu/E8RqsmcEoXf+ClUo93VIyr3sRynKqAYENhrUYZb/PqTqMxnP1dso79s8+/wCzJFMAoQVKX24I0Wd99k2cIu8cEUw/15XuwuiiwRi39nhxHwKTcN22LAIF6spWe76jMjjRfAAzijcJj4fTSngl/jBIJ6Kpg1fUuc5ipIpZW9zCPJ0k8agGVqqde9tlsaRNF7zybw7qUx2qT7kzs4Pn24iVeYBCShK8HVOWyLY/9BRpu3uGwA/9YVA2+H7dvlQdF7zTWdUJ
-    ufoLicenseKey: QWRTNGlCZi8vLy8vQUFBQUtGWGI0TGJ4b0U3T2cwM3oyTmdWMlJJUGhxWGtNaFJKSk9CaVBPWVRVODZRTXZJTDdEam9rZGphK1pSTFZrWFNyb2VQL2VhYzVXVU4weC9VZzU1czhKeERoNnJFTTFZamFSOGU1Y0RnbE1zWElwRkFWTXd6bityVWVlVCtobGI2TTJlNDhuSXdvMU1RckM4Q0I0WFIzSFo0bUFVaVh3WCtCdmp5RVJGd2k2K3dpY09yUlpSL2tlRWVraHk0VUpEVzljUG5ybnkzcHAwUnJIaGVHZklENlVmdksrNHlQb0JWSmpxcVhrSFRiYjQ0aVUwR084dVg3UnJhWk1TL3p1KzcxNVA4c2c3WlI4TFZXNjE1dW8wL0pVelZ3WlkySzQ1eXkrelhZc2M3bkhNd3Ezd1hnYzgzM3V3Q0JaZ243TGU2ZVdpZ3BFemV2dWV1dTQ0dlk3U3U4L25Hc3JuMHFxckRUMlFHSkl5MkdOeFg=
+    vuforiaLicenseKey: 
+    ufoLicenseKey: QVhiM0Y1Ly8vLy8vQUFBQUtPbnFIeHJFSGs1N3VrMlg4U050eVBzK2pkOFZxMDhrazlwYjBsYS9aZUIxQlV1ckZWcWt0ZllSQWpnT2tIRlY2VzdOMDRTRjNYRUhmbTF5L1BnYlB4eWdHWEF6RUNheXowc3dyNVNYa2ozdERuRjhka1FpOHRscHdkMDcrcEJEY1FjTjNJcUM1bEgwOTYzQkdZdjRsQStRb0hSQU9nRGthelp5TlY0WHVwWU9EaE05NWw5bXAzbnBDMjM5MWZBWXBFdEdiL2loTDNab3N4b25ZblhjK1JtSS9wLzRoTDIwVGhmTXR6WFJNYkpUTXZLZzJoQ0N0TEJXNEptZ0pSOUtSdStzQWM3QjVNOWFFMGVHQ1dUT1VRSUUweEpiZC9ZL2cvS29iNDhBRXdQOGFwbWR5NmRWU0FHU2psVzRZY2FEU2Zud3J1ZHhucVNmSUZiajNTUnIzM0lKVlFIaW1rL0oyOGNFeDdyekcySXg=
     delayedInitialization: 0
     cameraFocusModeSetting: 2
     cameraDeviceModeSetting: -1
-    maxSimultaneousImageTargets: 2
+    maxSimultaneousImageTargets: 1
     virtualSceneScaleFactor: 1
     modelTargetRecoWhileExtendedTracked: 1
     shareRecordingsInITunes: 0
     logLevel: 0
     version: 10.29.6
-    eulaAcceptedVersions: '{"Values":["","0.0","10.29"]}'
+    eulaAcceptedVersions: '{"Values":["0.0","10.29"]}'
   database:
     disableModelExtraction: 0
   shaders:
