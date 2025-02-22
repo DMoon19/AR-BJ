@@ -151,13 +151,13 @@ public class GameManager : MonoBehaviour
     
     void DrawCard(bool isDealer)
     {
-        // Instanciar la carta
-        GameObject newCard = Instantiate(cardPrefab, isDealer ? dealerCardSpawn : playerCardSpawn);
-        Debug.unityLogger.Log("carta instanciada");
+        GameObject newCard = Instantiate(cardPrefab, isDealer ? dealerCardSpawn.position : playerCardSpawn.position, Quaternion.Euler(0, 90, 0));
+        newCard.transform.SetParent(isDealer ? dealerCardSpawn : playerCardSpawn); // Asigna el padre
+        Debug.unityLogger.Log("Carta instanciada");
+
         NewCardScript cardScript = newCard.GetComponent<NewCardScript>();
         int cardValue = deckScript.DealCard(cardScript);
 
-        // Actualizar el valor de la mano
         if (isDealer)
         {
             dealerHandValue += cardValue;
@@ -169,7 +169,6 @@ public class GameManager : MonoBehaviour
             scoreText.text = "Jugador: " + playerHandValue;
         }
 
-        // Posicionar la carta
         Vector3 newPosition = new Vector3(
             (isDealer ? dealerCardSpawn.position.x : playerCardSpawn.position.x) + distanceBetweenCards * (isDealer ? dealerCardNumber : hitClicks),
             isDealer ? dealerCardSpawn.position.y : playerCardSpawn.position.y,
@@ -177,14 +176,9 @@ public class GameManager : MonoBehaviour
         );
         newCard.transform.position = newPosition;
 
-        // Rotar la carta si es el dealer y es la segunda carta
         if (isDealer && dealerCardNumber == 2)
         {
-            cardScript.SetCardBack(); // Boca abajo
-        }
-        else
-        {
-            newCard.transform.rotation = Quaternion.identity; // Boca arriba
+            cardScript.SetCardBack();
         }
 
         Debug.Log("Carta repartida con valor: " + cardValue + (isDealer ? " (Dealer)" : " (Jugador)"));

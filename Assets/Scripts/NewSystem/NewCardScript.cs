@@ -25,6 +25,7 @@ public class NewCardScript : MonoBehaviour
     
     public void SetCardTexture(Texture frontTexture)
     {
+        Material newMaterial = new Material(cardFrontMaterial);
         cardFrontMaterial.mainTexture = frontTexture; // Asigna la textura directamente
         cardRenderer.material = cardFrontMaterial; // Usa el material existente
     }

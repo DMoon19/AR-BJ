@@ -665,9 +665,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391943121}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1, y: 0.05, z: -1.5}
-  m_LocalScale: {x: 0.35999995, y: 1.8947369, z: 0.26526317}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 853811509}
@@ -1061,9 +1061,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1050963602}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1, y: 0.05, z: 1.72}
-  m_LocalScale: {x: 0.35999995, y: 1.8947369, z: 0.26526317}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 853811509}
@@ -3244,7 +3244,7 @@ PrefabInstance:
     - target: {fileID: 2299281000525074579, guid: 67cb1c2d2b7b6334f8fd3ec00ab54083,
         type: 3}
       propertyPath: distanceBetweenCards
-      value: 0.6
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6139790876847809175, guid: 67cb1c2d2b7b6334f8fd3ec00ab54083,
         type: 3}
