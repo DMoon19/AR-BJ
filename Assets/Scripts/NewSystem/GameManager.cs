@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int timeBetweenMessages;
 
     private int splitClicks;
-    private int dealerExtraCards;
+    private int dealerCards;
     private int hitClicks;
     private int bet;
     private int dealerCardNumber = 0;
@@ -53,9 +53,12 @@ public class GameManager : MonoBehaviour
     private Vector3 distanceFromCardToCardDealer;
     public float distance;
 
+    private int counter;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        counter = 0;
         startButton.onClick.AddListener(StartGame);
         dealButton.onClick.AddListener(DealClicked);
         hitButton.onClick.AddListener(HitClicked);
@@ -91,7 +94,7 @@ public class GameManager : MonoBehaviour
     {
         bet = 0;
         splitClicks = 0;
-        dealerExtraCards = 0;
+        dealerCards = 0;
         hitClicks = 0;
         moneyLeft = startMoney;
         cashText.gameObject.SetActive(true);    
@@ -113,9 +116,10 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ShowMessage("Apueste por favor", timeBetweenMessages, "APUESTE"));
         
         cashText.text = moneyLeft.ToString();
-
+        
+        counter = 0;
         splitClicks = 0;
-        dealerExtraCards = 0;
+        dealerCards = 0;
         hitClicks = 0;
     }
 
@@ -133,11 +137,15 @@ public class GameManager : MonoBehaviour
     void DealClicked()
     {
         DrawCard(false);
+        counter++;
         DrawCard(true);
+        counter++;
         StartCoroutine(AddDistanceBetweenCards());
 
         DrawCard(false);
+        counter++;
         DrawCard(true);
+        counter++;
         StartCoroutine(AddDistanceBetweenCards());
 
         hitButton.gameObject.SetActive(true);
@@ -153,6 +161,10 @@ public class GameManager : MonoBehaviour
             splitButton.gameObject.SetActive(true);
 
         }*/
+        if (playerHandValue == 21)//BLACKJACK>>>>>>
+        {
+            //BlackJack();
+        }
        
     }
     IEnumerator AddDistanceBetweenCards()
@@ -160,18 +172,41 @@ public class GameManager : MonoBehaviour
         distance = distanceBetweenCards + distance;
         yield return distance;
     }
+
+    private int hiddenCardValue;
     void DrawCard(bool isDealer)
     {
         distanceFromCardToCardDealer = dealerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
         distanceFromCardToCardPlayer = playerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
-        
-        GameObject newCard = Instantiate(cardPrefab, isDealer ? distanceFromCardToCardDealer : distanceFromCardToCardPlayer, Quaternion.Euler(0, 90, 0));
-        newCard.transform.SetParent(isDealer ? dealerCardSpawn : playerCardSpawn); // Asigna el padre
-        Debug.unityLogger.Log("Carta instanciada");
 
+        int hiddenCardRotation = 0;
+
+        if (counter == 3)
+        {
+            
+            hiddenCardRotation = 180;
+            Debug.Log(counter);
+        }
+        
+        GameObject newCard = Instantiate(cardPrefab, isDealer ? distanceFromCardToCardDealer : distanceFromCardToCardPlayer, Quaternion.Euler(hiddenCardRotation, 90, 0));
+        newCard.transform.SetParent(isDealer ? dealerCardSpawn : playerCardSpawn); // Asigna el padre
+        if (counter == 3)
+        {
+            newCard.tag = "Mierda";
+        }
+
+        Debug.unityLogger.Log("Carta instanciada");
+        
         NewCardScript cardScript = newCard.GetComponent<NewCardScript>();
         int cardValue = deckScript.DealCard(cardScript);
-
+        
+        if (hiddenCardRotation == 180)
+        {
+            hiddenCardValue = cardValue;
+            dealerHandValue -= cardValue;
+            Debug.Log("Valor Carta oculta "+ hiddenCardValue);
+        }
+        
         if (isDealer)
         {
             dealerHandValue += cardValue;
@@ -196,19 +231,71 @@ public class GameManager : MonoBehaviour
     {
         DrawCard(false);
         StartCoroutine(AddDistanceBetweenCards());
-        if (playerHandValue >21)
+        if (playerHandValue >21) //Se pasa
         {
-                Lose();
+            Lose();
+        }
+
+        if (playerHandValue == 21)//BLACKJACK>>>>>>
+        {
+            //BlackJack();
+        }
+    }
+    
+    IEnumerator DealerHitCard()
+    {
+        DrawCard(true);
+        StartCoroutine(AddDistanceBetweenCards());
+        yield return new WaitForSeconds(0.05f);
+        if (dealerHandValue < 17)
+        {
+            StandClicked();
+            //StartCoroutine(DealerHitCard());
         }
         
-        //playerScript.GetCard();
-        //scoreText.text = "Jugador: " + playerScript.handValue;
-        //if (playerScript.handValue > 21) RoundOver();
     }
-
-    void StandClicked()
+    int count;
+    public void StandClicked()
     {
+        GameObject carta = GameObject.FindWithTag("Mierda");
+        carta.transform.rotation = Quaternion.Euler(0, -90, 0);
         
+        if (count == 0)
+        {
+            int realDealerValue = dealerHandValue+hiddenCardValue;
+            dealerHandValue = realDealerValue;
+            dealerScoreText.text = "Dealer: " + dealerHandValue;
+            count++;
+        } 
+        if (dealerHandValue <17)
+        {
+            StartCoroutine(DealerHitCard());
+        }
+        else
+        {
+            if (dealerHandValue > 21)
+            {
+                Debug.Log("WIN");
+                //Win;
+            }  
+        
+            if (playerHandValue <21 && playerHandValue > dealerHandValue) //Gana
+            {
+                Debug.Log("WIN");
+                //Win();
+            }
+            if (playerHandValue <21 && playerHandValue < dealerHandValue) //pierde
+            {
+                Debug.Log("LOSE");
+                Lose();
+            }
+
+            if (playerHandValue == dealerHandValue)
+            {
+                Debug.Log("TIE");
+                //Tie();
+            }
+        }
     }
 
     void DoubleClicked()
