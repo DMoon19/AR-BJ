@@ -280,6 +280,7 @@ public class GameManager : MonoBehaviour
         
     }
     int count;
+    private bool isChupando=false;
     public void StandClicked()
     {
         dealButton.gameObject.SetActive(false);
@@ -301,31 +302,43 @@ public class GameManager : MonoBehaviour
         }
         else if(dealerHandValue >= 17)
         {
+
+            
+            
             if (dealerHandValue == 21)
             {
+                if (isChupando) return;
                 BlackJack();
+               
             }
             if (dealerHandValue > 21)
             {
+                if (isChupando) return;
                 Debug.Log("WIN DEALERHANDVALUE >21");
-                Win();
+                Win().ConfigureAwait(false);
+              
             }  
         
             if (playerHandValue <21 && playerHandValue > dealerHandValue) //Gana
             {
+                if (isChupando) return;
                 Debug.Log("WIN NORMALITO");
-                Win();
+                Win().ConfigureAwait(false);
+           
             }
             if (playerHandValue <21 && playerHandValue < dealerHandValue && dealerHandValue < 22) //pierde
-            {
-                Debug.Log("LOSE NORMALITO");
-                Lose();
+            {                                   //Si mano de jugador es menor a 21 
+                if (isChupando) return;
+                print(playerHandValue <21 && playerHandValue < dealerHandValue && dealerHandValue < 22);
+                Debug.Log("LOSE NORMALITO");   //Si mano de jugador es menor a mano de dealer y es menor a 21
+                Lose().ConfigureAwait(false);  //Si mano de jugador es menor a mano de dealer y es menor a 21;                       //  
             }
 
             if (playerHandValue == dealerHandValue)
             {
+                if (isChupando) return;
                 Debug.Log("TIE");
-                Tie();
+                Tie().ConfigureAwait(false);
             }
         }
         
@@ -349,21 +362,34 @@ public class GameManager : MonoBehaviour
         StandClicked();
     }
 
+    private bool isLosing = false;
+
     private async Task Lose()
     {
-        await Task.Delay(delay*1000);
-        mainText.gameObject.SetActive(true);
-        mainText.text = "Perdiste :c, LOOOSERRRR";
-        await Task.Delay(delay*500);
+        if (isLosing) return;
+        isLosing = true;
+        isChupando = true;
+        await Task.Delay(delay * 1000);
+        if (mainText != null)
+        {
+            mainText.gameObject.SetActive(true);
+            mainText.text = "Perdiste :c, LOOOSERRRR";
+        }
+        await Task.Delay(delay * 500);
 
         EndRound();
+
+        isLosing = false;
     }
+
 
     private async Task Win()
     {
+        isChupando = true;
         await Task.Delay(delay*1000);
 
-        moneyLeft = moneyLeft + (currentBet*2);
+        moneyLeft += (currentBet*2);
+        mainText.gameObject.SetActive(true);
         mainText.text = "Felicitaciones, ganaste:" + moneyLeft.ToString();
         await Task.Delay(delay*1000);
 
@@ -390,13 +416,14 @@ public class GameManager : MonoBehaviour
 
     private async Task Tie()
     {
-        moneyLeft = moneyLeft + currentBet;
+        moneyLeft += currentBet;
         mainText.text = "Empate, No perdiste ni ganaste";
         EndRound();
     }
 
     private async Task EndRound()
     {
+        isChupando = false;
         playerHandValue = 0;
         scoreText.text = playerHandValue.ToString();
 
