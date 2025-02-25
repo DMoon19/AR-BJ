@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine.UI;
 using TMPro;
 
@@ -40,9 +41,10 @@ public class GameManager : MonoBehaviour
     [Header("Spawns")]
     [SerializeField] private Transform playerCardSpawn; 
     [SerializeField] private Transform dealerCardSpawn;
-
     
     [SerializeField] private int timeBetweenMessages;
+
+    [SerializeField] private int delay=2;
 
     private int splitClicks;
     private int dealerCards;
@@ -117,10 +119,21 @@ public class GameManager : MonoBehaviour
         
         cashText.text = moneyLeft.ToString();
         
-        counter = 0;
-        splitClicks = 0;
-        dealerCards = 0;
-        hitClicks = 0;
+        dealerScoreText.text = dealerHandValue.ToString();
+        
+    }
+    void DestroyAllSpawnedObjects()
+    {
+        foreach (Transform child in playerCardSpawn) // O Spawner.transform si el script no está en el Spawner
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Transform child in dealerCardSpawn)
+        {
+            Destroy(child.gameObject);
+        }
+        StartRound();
     }
 
     void BetClicked()
@@ -138,20 +151,26 @@ public class GameManager : MonoBehaviour
     {
         DrawCard(false);
         counter++;
+
         DrawCard(true);
         counter++;
+
+        Debug.Log("AÑADIDA DISTANCIA");
         StartCoroutine(AddDistanceBetweenCards());
 
         DrawCard(false);
         counter++;
+
         DrawCard(true);
         counter++;
+
         StartCoroutine(AddDistanceBetweenCards());
 
         hitButton.gameObject.SetActive(true);
         standButton.gameObject.SetActive(true);
         betButton.gameObject.SetActive(false);
         doubleButton.gameObject.SetActive(true);
+        dealButton.gameObject.SetActive(false);
         mainText.gameObject.SetActive(false);
         scoreText.gameObject.SetActive(true);  
         dealerScoreText.gameObject.SetActive(true);
@@ -161,23 +180,35 @@ public class GameManager : MonoBehaviour
             splitButton.gameObject.SetActive(true);
 
         }*/
-        if (playerHandValue == 21)//BLACKJACK>>>>>>
+        if (playerHandValue == 21 )//BLACKJACK>>>>>>
         {
-            //BlackJack();
+            BlackJack();
         }
        
     }
+
+    private float restingDistance;
     IEnumerator AddDistanceBetweenCards()
     {
-        distance = distanceBetweenCards + distance;
+        distance = distanceBetweenCards + distance; //-restingDistance;
+        
+        if (playerHandValue == 100)//ARREGLAR ESTA LOGICA
+        {
+            restingDistance = distanceBetweenCards*hitClicks;
+        }
+
+        
         yield return distance;
     }
 
     private int hiddenCardValue;
-    void DrawCard(bool isDealer)
+    public async Task DrawCard(bool isDealer)
     {
+        
         distanceFromCardToCardDealer = dealerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
         distanceFromCardToCardPlayer = playerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
+        
+        await Task.Delay(delay*1000);
 
         int hiddenCardRotation = 0;
 
@@ -217,20 +248,19 @@ public class GameManager : MonoBehaviour
             playerHandValue += cardValue;
             scoreText.text = "Jugador: " + playerHandValue;
         }
-        
-        if (isDealer && dealerCardNumber == 2)
-        {
-            cardScript.SetCardBack();
-        }
-
         Debug.Log("Carta repartida con valor: " + cardValue + (isDealer ? " (Dealer)" : " (Jugador)"));
+        
     }
 
 
     void HitClicked()
     {
+        doubleButton.gameObject.SetActive(false);
+        splitButton.gameObject.SetActive(false);
+        dealButton.gameObject.SetActive(false);
         DrawCard(false);
         StartCoroutine(AddDistanceBetweenCards());
+
         if (playerHandValue >21) //Se pasa
         {
             Lose();
@@ -238,8 +268,10 @@ public class GameManager : MonoBehaviour
 
         if (playerHandValue == 21)//BLACKJACK>>>>>>
         {
-            //BlackJack();
+            BlackJack();
         }
+
+        hitClicks++;
     }
     
     IEnumerator DealerHitCard()
@@ -247,42 +279,46 @@ public class GameManager : MonoBehaviour
         DrawCard(true);
         StartCoroutine(AddDistanceBetweenCards());
         yield return new WaitForSeconds(0.05f);
-        if (dealerHandValue < 17)
-        {
-            StandClicked();
-            //StartCoroutine(DealerHitCard());
-        }
+        StandClicked();
         
     }
     int count;
     public void StandClicked()
     {
+        dealButton.gameObject.SetActive(false);
+        standButton.gameObject.SetActive(false);
         GameObject carta = GameObject.FindWithTag("Mierda");
         carta.transform.rotation = Quaternion.Euler(0, -90, 0);
         
         if (count == 0)
         {
+            Debug.Log("DEBBUGER CONTADOR");
             int realDealerValue = dealerHandValue+hiddenCardValue;
             dealerHandValue = realDealerValue;
             dealerScoreText.text = "Dealer: " + dealerHandValue;
             count++;
-        } 
+        }
+        
         if (dealerHandValue <17)
         {
             StartCoroutine(DealerHitCard());
         }
-        else
+        else if(dealerHandValue >= 17)
         {
+            if (dealerHandValue == 21)
+            {
+                BlackJack();
+            }
             if (dealerHandValue > 21)
             {
                 Debug.Log("WIN");
-                //Win;
+                Win();
             }  
         
             if (playerHandValue <21 && playerHandValue > dealerHandValue) //Gana
             {
                 Debug.Log("WIN");
-                //Win();
+                Win();
             }
             if (playerHandValue <21 && playerHandValue < dealerHandValue) //pierde
             {
@@ -293,25 +329,89 @@ public class GameManager : MonoBehaviour
             if (playerHandValue == dealerHandValue)
             {
                 Debug.Log("TIE");
-                //Tie();
+                Tie();
             }
         }
+        
     }
 
     void DoubleClicked()
     {
+        hitClicks++;
+        DrawCard(false);
+        StartCoroutine(AddDistanceBetweenCards());
+
+        doubleButton.gameObject.SetActive(false);
+        dealButton.gameObject.SetActive(false);
+        hitButton.gameObject.SetActive(false);
+        splitButton.gameObject.SetActive(false);
+        standButton.gameObject.SetActive(false);
         
+        moneyLeft = moneyLeft - bet;
+        cashText.text = moneyLeft.ToString();
+        
+        StandClicked();
     }
 
-    void Lose()
+    private async Task Lose()
     {
-        
+        await Task.Delay(delay*500);
+        mainText.text = "Perdiste :c, LOOOSERRRR";
+        await Task.Delay(delay*500);
+
+        EndRound();
     }
 
-    void Win()
+    private async Task Win()
     {
+        await Task.Delay(delay*1000);
+
+        moneyLeft = moneyLeft + bet*2;
+        mainText.text = "Felicitaciones, ganaste:" + moneyLeft.ToString();
+        await Task.Delay(delay*1000);
+
+        EndRound();
+    }
+
+    private async Task BlackJack()
+    {
+        if (dealerHandValue == 21)
+        {
+            Lose();
+        }
+        else if (playerHandValue == 21)
+        {
+            moneyLeft = moneyLeft + bet*3;
+            mainText.text = "BLACKJACKKKK FELICITACIONES, Ganaste: " + moneyLeft.ToString();
+            EndRound();
+        }
+    }
+
+    private async Task Tie()
+    {
+        moneyLeft = moneyLeft + bet;
+        mainText.text = "Empate, No perdiste ni ganaste";
+        EndRound();
+    }
+
+    private async Task EndRound()
+    {
+        playerHandValue = 0;
+        scoreText.text = dealerHandValue.ToString();
+
+        dealerHandValue = 0;
+        dealerScoreText.text = dealerHandValue.ToString();
+
+        counter = 0;
+        splitClicks = 0;
+        dealerCards = 0;
+        hitClicks = 0;
+        distance = 0;
+        await Task.Delay(delay*1000);
+        DestroyAllSpawnedObjects();
         
     }
+    
 
     // Update is called once per frame
     void Update()
