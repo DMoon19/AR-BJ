@@ -46,8 +46,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private int delay=2;
 
-    private int splitClicks;
-    private int dealerCards;
+    //private int splitClicks;
+    //private int dealerCards;
     private int hitClicks;
     private int bet;
     private int dealerCardNumber = 0;
@@ -95,8 +95,8 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         bet = 0;
-        splitClicks = 0;
-        dealerCards = 0;
+        //splitClicks = 0;
+        //dealerCards = 0;
         hitClicks = 0;
         moneyLeft = startMoney;
         cashText.gameObject.SetActive(true);    
@@ -202,13 +202,12 @@ public class GameManager : MonoBehaviour
     }
 
     private int hiddenCardValue;
-    public async Task DrawCard(bool isDealer)
+    void DrawCard(bool isDealer)
     {
         
         distanceFromCardToCardDealer = dealerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
         distanceFromCardToCardPlayer = playerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
         
-        await Task.Delay(delay*1000);
 
         int hiddenCardRotation = 0;
 
@@ -226,7 +225,6 @@ public class GameManager : MonoBehaviour
             newCard.tag = "Mierda";
         }
 
-        Debug.unityLogger.Log("Carta instanciada");
         
         NewCardScript cardScript = newCard.GetComponent<NewCardScript>();
         int cardValue = deckScript.DealCard(cardScript);
@@ -248,7 +246,6 @@ public class GameManager : MonoBehaviour
             playerHandValue += cardValue;
             scoreText.text = "Jugador: " + playerHandValue;
         }
-        Debug.Log("Carta repartida con valor: " + cardValue + (isDealer ? " (Dealer)" : " (Jugador)"));
         
     }
 
@@ -320,7 +317,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("WIN");
                 Win();
             }
-            if (playerHandValue <21 && playerHandValue < dealerHandValue) //pierde
+            if (playerHandValue <21 && playerHandValue < dealerHandValue && dealerHandValue < 22) //pierde
             {
                 Debug.Log("LOSE");
                 Lose();
@@ -403,8 +400,8 @@ public class GameManager : MonoBehaviour
         dealerScoreText.text = dealerHandValue.ToString();
 
         counter = 0;
-        splitClicks = 0;
-        dealerCards = 0;
+        //splitClicks = 0;
+        //dealerCards = 0;
         hitClicks = 0;
         distance = 0;
         await Task.Delay(delay*1000);
