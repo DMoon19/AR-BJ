@@ -5,15 +5,15 @@ using UnityEngine;
 public class DeckScript : MonoBehaviour
 {
     [Header("Sprites de Cartas")]
-    [SerializeField] private Sprite[] normalCardSprites; // Cartas normales (2-10)
-    [SerializeField] private Sprite[] asesSprites;      // Ases (A)
-    [SerializeField] private Sprite[] JKQCardSprites;   // Figuras (J, Q, K)
+    [SerializeField] private Sprite[] normalCardSprites;
+    [SerializeField] private Sprite[] asesSprites;
+    [SerializeField] private Sprite[] JKQCardSprites;
 
     [Header("Cantidad de Barajas")]
-    [SerializeField] private int decks = 8; // Número de barajas (8 por defecto)
+    [SerializeField] private int decks = 8;
 
-    private Dictionary<Sprite, int> deck = new Dictionary<Sprite, int>(); // Diccionario para almacenar cartas y sus valores
-    private List<Sprite> availableCards = new List<Sprite>(); // Lista de cartas disponibles para repartir
+    private Dictionary<Sprite, int> deck = new Dictionary<Sprite, int>();
+    private List<Sprite> availableCards = new List<Sprite>();
 
     void Start()
     {
@@ -29,24 +29,21 @@ public class DeckScript : MonoBehaviour
 
         for (int deckCount = 0; deckCount < decks; deckCount++)
         {
-            // Agregar cartas normales (2-10)
             foreach (var sprite in normalCardSprites)
             {
                 deck[sprite] = GetValueFromSprite(sprite);
                 availableCards.Add(sprite);
             }
-
-            // Agregar figuras (J, Q, K)
+            
             foreach (var sprite in JKQCardSprites)
             {
-                deck[sprite] = 10; // Las figuras valen 10
+                deck[sprite] = 10;
                 availableCards.Add(sprite);
             }
 
-            // Agregar ases (A)
             foreach (var sprite in asesSprites)
             {
-                deck[sprite] = 11; // Los ases valen 11 por defecto
+                deck[sprite] = 11;
                 availableCards.Add(sprite);
             }
         }

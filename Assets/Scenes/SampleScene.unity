@@ -1456,7 +1456,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1347548144
 Transform:
   m_ObjectHideFlags: 0
@@ -3244,7 +3244,7 @@ PrefabInstance:
     - target: {fileID: 2299281000525074579, guid: 67cb1c2d2b7b6334f8fd3ec00ab54083,
         type: 3}
       propertyPath: distanceBetweenCards
-      value: 2
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 6139790876847809175, guid: 67cb1c2d2b7b6334f8fd3ec00ab54083,
         type: 3}

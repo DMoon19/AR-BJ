@@ -49,6 +49,9 @@ public class GameManager : MonoBehaviour
     private int hitClicks;
     private int bet;
     private int dealerCardNumber = 0;
+    private Vector3 distanceFromCardToCardPlayer; 
+    private Vector3 distanceFromCardToCardDealer;
+    public float distance;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -131,8 +134,12 @@ public class GameManager : MonoBehaviour
     {
         DrawCard(false);
         DrawCard(true);
+        StartCoroutine(AddDistanceBetweenCards());
+
         DrawCard(false);
         DrawCard(true);
+        StartCoroutine(AddDistanceBetweenCards());
+
         hitButton.gameObject.SetActive(true);
         standButton.gameObject.SetActive(true);
         betButton.gameObject.SetActive(false);
@@ -148,10 +155,17 @@ public class GameManager : MonoBehaviour
         }*/
        
     }
-    
+    IEnumerator AddDistanceBetweenCards()
+    {
+        distance = distanceBetweenCards + distance;
+        yield return distance;
+    }
     void DrawCard(bool isDealer)
     {
-        GameObject newCard = Instantiate(cardPrefab, isDealer ? dealerCardSpawn.position : playerCardSpawn.position, Quaternion.Euler(0, 90, 0));
+        distanceFromCardToCardDealer = dealerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
+        distanceFromCardToCardPlayer = playerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
+        
+        GameObject newCard = Instantiate(cardPrefab, isDealer ? distanceFromCardToCardDealer : distanceFromCardToCardPlayer, Quaternion.Euler(0, 90, 0));
         newCard.transform.SetParent(isDealer ? dealerCardSpawn : playerCardSpawn); // Asigna el padre
         Debug.unityLogger.Log("Carta instanciada");
 
@@ -168,14 +182,7 @@ public class GameManager : MonoBehaviour
             playerHandValue += cardValue;
             scoreText.text = "Jugador: " + playerHandValue;
         }
-
-        Vector3 newPosition = new Vector3(
-            (isDealer ? dealerCardSpawn.position.x : playerCardSpawn.position.x) + distanceBetweenCards * (isDealer ? dealerCardNumber : hitClicks),
-            isDealer ? dealerCardSpawn.position.y : playerCardSpawn.position.y,
-            isDealer ? dealerCardSpawn.position.z : playerCardSpawn.position.z
-        );
-        newCard.transform.position = newPosition;
-
+        
         if (isDealer && dealerCardNumber == 2)
         {
             cardScript.SetCardBack();
@@ -188,6 +195,7 @@ public class GameManager : MonoBehaviour
     void HitClicked()
     {
         DrawCard(false);
+        StartCoroutine(AddDistanceBetweenCards());
         if (playerHandValue >21)
         {
                 Lose();
