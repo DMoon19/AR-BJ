@@ -96,13 +96,13 @@ public class DeckScript : MonoBehaviour
         if (spriteName.Contains("j") || spriteName.Contains("q") || spriteName.Contains("k")) return 10;
         if (spriteName.Contains("a")) return 11;
 
-        // Extraer número directamente del nombre (Ejemplo: "card_7")
-        foreach (char c in spriteName)
+        // Extrae el número correctamente, considerando "10" como un solo valor
+        string numberPart = System.Text.RegularExpressions.Regex.Match(spriteName, @"\d+").Value;
+
+        if (!string.IsNullOrEmpty(numberPart))
         {
-            if (char.IsDigit(c))
-            {
-                return int.Parse(c.ToString());
-            }
+            int number = int.Parse(numberPart);
+            return (number >= 2 && number <= 10) ? number : 0;
         }
 
         return 0;

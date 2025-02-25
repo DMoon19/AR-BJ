@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     //private int dealerCards;
     private int hitClicks;
     private int bet;
-    private int dealerCardNumber = 0;
+    //private int dealerCardNumber = 0;
     private Vector3 distanceFromCardToCardPlayer; 
     private Vector3 distanceFromCardToCardDealer;
     public float distance;
@@ -155,7 +155,6 @@ public class GameManager : MonoBehaviour
         DrawCard(true);
         counter++;
 
-        Debug.Log("AÑADIDA DISTANCIA");
         StartCoroutine(AddDistanceBetweenCards());
 
         DrawCard(false);
@@ -213,9 +212,7 @@ public class GameManager : MonoBehaviour
 
         if (counter == 3)
         {
-            
             hiddenCardRotation = 180;
-            Debug.Log(counter);
         }
         
         GameObject newCard = Instantiate(cardPrefab, isDealer ? distanceFromCardToCardDealer : distanceFromCardToCardPlayer, Quaternion.Euler(hiddenCardRotation, 90, 0));
@@ -260,11 +257,14 @@ public class GameManager : MonoBehaviour
 
         if (playerHandValue >21) //Se pasa
         {
+            Debug.Log("LOSE DESDE HIT");
             Lose();
         }
 
         if (playerHandValue == 21)//BLACKJACK>>>>>>
         {
+            Debug.Log("BLACKJACK DESDE HIT");
+
             BlackJack();
         }
 
@@ -289,7 +289,6 @@ public class GameManager : MonoBehaviour
         
         if (count == 0)
         {
-            Debug.Log("DEBBUGER CONTADOR");
             int realDealerValue = dealerHandValue+hiddenCardValue;
             dealerHandValue = realDealerValue;
             dealerScoreText.text = "Dealer: " + dealerHandValue;
@@ -308,18 +307,18 @@ public class GameManager : MonoBehaviour
             }
             if (dealerHandValue > 21)
             {
-                Debug.Log("WIN");
+                Debug.Log("WIN DEALERHANDVALUE >21");
                 Win();
             }  
         
             if (playerHandValue <21 && playerHandValue > dealerHandValue) //Gana
             {
-                Debug.Log("WIN");
+                Debug.Log("WIN NORMALITO");
                 Win();
             }
             if (playerHandValue <21 && playerHandValue < dealerHandValue && dealerHandValue < 22) //pierde
             {
-                Debug.Log("LOSE");
+                Debug.Log("LOSE NORMALITO");
                 Lose();
             }
 
@@ -352,7 +351,8 @@ public class GameManager : MonoBehaviour
 
     private async Task Lose()
     {
-        await Task.Delay(delay*500);
+        await Task.Delay(delay*1000);
+        mainText.gameObject.SetActive(true);
         mainText.text = "Perdiste :c, LOOOSERRRR";
         await Task.Delay(delay*500);
 
@@ -363,7 +363,7 @@ public class GameManager : MonoBehaviour
     {
         await Task.Delay(delay*1000);
 
-        moneyLeft = moneyLeft + bet*2;
+        moneyLeft = moneyLeft + (currentBet*2);
         mainText.text = "Felicitaciones, ganaste:" + moneyLeft.ToString();
         await Task.Delay(delay*1000);
 
@@ -374,19 +374,23 @@ public class GameManager : MonoBehaviour
     {
         if (dealerHandValue == 21)
         {
+            mainText.text = "21 DEL DEALER, PERDISTE";
+            await Task.Delay(delay*1000);
             Lose();
         }
         else if (playerHandValue == 21)
         {
-            moneyLeft = moneyLeft + bet*3;
+            moneyLeft = moneyLeft + (currentBet*3);
             mainText.text = "BLACKJACKKKK FELICITACIONES, Ganaste: " + moneyLeft.ToString();
-            EndRound();
+            await Task.Delay(delay * 1000);
+
+        EndRound();
         }
     }
 
     private async Task Tie()
     {
-        moneyLeft = moneyLeft + bet;
+        moneyLeft = moneyLeft + currentBet;
         mainText.text = "Empate, No perdiste ni ganaste";
         EndRound();
     }
@@ -394,14 +398,12 @@ public class GameManager : MonoBehaviour
     private async Task EndRound()
     {
         playerHandValue = 0;
-        scoreText.text = dealerHandValue.ToString();
+        scoreText.text = playerHandValue.ToString();
 
         dealerHandValue = 0;
         dealerScoreText.text = dealerHandValue.ToString();
 
         counter = 0;
-        //splitClicks = 0;
-        //dealerCards = 0;
         hitClicks = 0;
         distance = 0;
         await Task.Delay(delay*1000);
