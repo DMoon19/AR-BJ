@@ -112,10 +112,8 @@ public class GameManager : MonoBehaviour
         //dealerCards = 0;
         hitClicks = 0;
         moneyLeft = startMoney;
-        cashText.gameObject.SetActive(true);   
-        
+        cashText.gameObject.SetActive(true);
         StartRound();
-        
     }
 
     void StartRound()
@@ -135,6 +133,11 @@ public class GameManager : MonoBehaviour
         cashText.text = moneyLeft.ToString();
         
         dealerScoreText.text = dealerHandValue.ToString();
+        
+        if (moneyLeft == 0)
+        {
+            EndGame();
+        }
         
     }
     void DestroyAllSpawnedObjects()
@@ -499,5 +502,13 @@ public class GameManager : MonoBehaviour
             handValue -= 10; // Cambiar un As de 11 a 1
             aceCount--;
         }
+    }
+
+    private async Task EndGame()
+    {
+        mainText.text = "No te queda dinero LUDOPATA, Chau";
+        await Task.Delay(5000);
+        Application.Quit();
+
     }
 }

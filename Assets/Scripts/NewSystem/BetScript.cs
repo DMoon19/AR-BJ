@@ -43,14 +43,28 @@ public class BetScript : MonoBehaviour
 
     private void IncreaseBet(int amount)
     {
-        bet += amount;
-        _betText.text = $"Apuesta: {bet}";
+        if (bet + amount <= _gameManager.moneyLeft)
+        {
+            bet += amount;
+            _betText.text = $"Apuesta: {bet}";
+        }
+        else
+        {
+            Debug.Log("No tienes suficiente dinero para esta apuesta.");
+        }
     }
 
     private void DoubleBet()
     {
-        bet *= 2;
-        _betText.text = $"Apuesta: {bet}";
+        if (bet * 2 <= _gameManager.moneyLeft)
+        {
+            bet *= 2;
+            _betText.text = $"Apuesta: {bet}";
+        }
+        else
+        {
+            Debug.Log("No tienes suficiente dinero para duplicar la apuesta.");
+        }
     }
 
     private void ResetBet()
@@ -77,10 +91,17 @@ public class BetScript : MonoBehaviour
         betCanvas.SetActive(false);
         timerCanvas.SetActive(false);
         timeText.gameObject.SetActive(false);
-        
-        _gameManager.currentBet = bet;
-        _gameManager.moneyLeft -= _gameManager.currentBet;
-        _gameManager.cashText.text = _gameManager.moneyLeft.ToString();
+        if (bet <= _gameManager.moneyLeft)
+        {
+            _gameManager.currentBet = bet;
+            _gameManager.moneyLeft -= _gameManager.currentBet;
+            _gameManager.cashText.text = _gameManager.moneyLeft.ToString();
+        }
+        else
+        {
+            Debug.Log("Error: Apuesta mayor al dinero disponible. Reiniciando apuesta.");
+            ResetBet();
+        }
     }
 
     private IEnumerator StartTimer()
