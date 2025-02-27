@@ -18,6 +18,7 @@ public class BetScript : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _timerText;  
     [SerializeField] private TextMeshProUGUI _betText;
     [SerializeField] private Button _dealButton;
+    [SerializeField] private Button _betButton;
 
     [SerializeField] private GameObject betCanvas;
     [SerializeField] private GameObject timerCanvas;
@@ -60,8 +61,8 @@ public class BetScript : MonoBehaviour
 
     public IEnumerator Bet()
     {
+        _betButton.gameObject.SetActive(false);
         _dealButton.gameObject.SetActive(false);
-        _gameManager.currentBet = bet;
 
         if (timerCoroutine != null)
         {
@@ -77,9 +78,9 @@ public class BetScript : MonoBehaviour
         timerCanvas.SetActive(false);
         timeText.gameObject.SetActive(false);
         
-        bet = currentBet;   
-        moneyLeft -= bet;
-        _gameManager.cashText.text = moneyLeft.ToString();
+        _gameManager.currentBet = bet;
+        _gameManager.moneyLeft -= _gameManager.currentBet;
+        _gameManager.cashText.text = _gameManager.moneyLeft.ToString();
     }
 
     private IEnumerator StartTimer()
@@ -87,10 +88,10 @@ public class BetScript : MonoBehaviour
         int timeLeft = 10;
         while (timeLeft > 0)
         {
-            _timerText.text = $"Tiempo: {timeLeft}s";
+            _timerText.text = $"{timeLeft}";
             yield return new WaitForSeconds(1f);
             timeLeft--;
         }
-        _timerText.text = "Tiempo: 0s";
+        _timerText.text = "0";
     }
 }

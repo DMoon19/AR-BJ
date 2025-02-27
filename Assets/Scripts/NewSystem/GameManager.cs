@@ -71,9 +71,7 @@ public class GameManager : MonoBehaviour
         dealButton.onClick.AddListener(DealClicked);
         hitButton.onClick.AddListener(HitClicked);
         standButton.onClick.AddListener(StandClicked);
-        betButton.onClick.AddListener(BetClicked);
         doubleButton.onClick.AddListener(DoubleClicked);
-        //splitButton.onClick.AddListener(SplitClicked);
         
         startButton.gameObject.SetActive(true);
         dealButton.gameObject.SetActive(false);
@@ -163,6 +161,8 @@ public class GameManager : MonoBehaviour
     
     void DealClicked()
     {
+        Debug.Log(currentBet);
+
         
         DrawCard(false);
         counter++;
@@ -218,7 +218,6 @@ public class GameManager : MonoBehaviour
     private int hiddenCardValue;
     void DrawCard(bool isDealer)
     {
-        
         distanceFromCardToCardDealer = dealerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
         distanceFromCardToCardPlayer = playerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
         
