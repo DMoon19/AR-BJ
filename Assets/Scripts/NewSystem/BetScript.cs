@@ -67,7 +67,7 @@ public class BetScript : MonoBehaviour
         }
     }
 
-    private void ResetBet()
+    public void ResetBet()
     {
         bet = 0;
         _betText.text = "Apuesta: 0";

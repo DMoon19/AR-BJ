@@ -15,13 +15,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] Button betButton;
     [SerializeField] Button doubleButton;
     [SerializeField] Button splitButton;
+    
+    [SerializeField] private AudioSource audioSource;
+
 
     [Header("Textos")]
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI dealerScoreText;
     [SerializeField] public TextMeshProUGUI cashText;
     [SerializeField] private TextMeshProUGUI mainText;
-    
+    [SerializeField] private TextMeshProUGUI betText;
+    [SerializeField] private TextMeshProUGUI betText2;
+
+    [SerializeField] private GameObject panelbetwin;
+    [SerializeField] private GameObject panelbettie;
+
     [Header("Scripts")]
     [SerializeField] private NewCardScript cardScript;
     [SerializeField] DeckScript deckScript;
@@ -417,8 +425,7 @@ public class GameManager : MonoBehaviour
         await Task.Delay(delay * 1000);
         if (mainText != null)
         {
-            mainText.gameObject.SetActive(true);
-            mainText.text = "Perdiste :c, LOOOSERRRR";
+          Debug.Log("LOSE");
         }
         await Task.Delay(delay * 500);
 
@@ -434,10 +441,14 @@ public class GameManager : MonoBehaviour
         await Task.Delay(delay*1000);
 
         moneyLeft += (currentBet*2);
-        mainText.gameObject.SetActive(true);
-        mainText.text = "Felicitaciones, ganaste:" + (currentBet*2).ToString();
+       // mainText.gameObject.SetActive(true);
+       // mainText.text = "Felicitaciones, ganaste:" + (currentBet*2).ToString();
+        panelbetwin.gameObject.SetActive(true);
+        betText.text = "$ " + (currentBet*2)+ " COP".ToString();
+        audioSource.Play();
+        
         await Task.Delay(delay*1000);
-
+        panelbetwin.gameObject.SetActive(false);
         EndRound();
     }
 
@@ -445,15 +456,18 @@ public class GameManager : MonoBehaviour
     {
         if (dealerHandValue == 21)
         {
-            mainText.text = "21 DEL DEALER, PERDISTE";
             await Task.Delay(delay*1000);
             Lose();
         }
         else if (playerHandValue == 21)
         {
             moneyLeft = moneyLeft + (currentBet*3);
-            mainText.text = "BLACKJACKKKK FELICITACIONES, Ganaste: " + (currentBet*3).ToString();
+            panelbetwin.gameObject.SetActive(true);
+
+            betText.text = "$ " + (currentBet*3) + " COP".ToString();
+            audioSource.Play();
             await Task.Delay(delay * 1000);
+            panelbetwin.gameObject.SetActive(false);
 
         EndRound();
         }
@@ -462,9 +476,14 @@ public class GameManager : MonoBehaviour
     private async Task Tie()
     {
         moneyLeft += currentBet;
-        mainText.text = "Empate, No perdiste ni ganaste";
+        panelbettie.gameObject.SetActive(true);
+
+        betText2.text = "$ " + (currentBet) + " COP".ToString();
+        await Task.Delay(delay*1000); 
+        panelbettie.gameObject.SetActive(false);
+
         EndRound();
-        await Task.Delay(delay*1000);   
+        
     }
 
     private async Task EndRound()
