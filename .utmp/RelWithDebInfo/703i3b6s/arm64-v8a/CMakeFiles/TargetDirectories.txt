@@ -1,0 +1,5 @@
+C:/AR-BJ/.utmp/RelWithDebInfo/703i3b6s/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/AR-BJ/.utmp/RelWithDebInfo/703i3b6s/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/AR-BJ/.utmp/RelWithDebInfo/703i3b6s/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/AR-BJ/.utmp/RelWithDebInfo/703i3b6s/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/AR-BJ/.utmp/RelWithDebInfo/703i3b6s/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir

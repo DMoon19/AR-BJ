@@ -1,0 +1,10 @@
+# ninja log v5
+22	1990	7623642973176000	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	24188867ca8e6315
+7	2070	7623642974489111	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	dac6ab7f4722bb4f
+42	2106	7623642974766095	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	662565867a925ef8
+17	2179	7623642975400380	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	c1b0d48b1d1235d2
+49	2182	7623642975682336	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	2afef259136def3d
+1	2237	7623642976251616	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	e5588a6efdef1465
+28	2420	7623642978079489	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	559d84482c64e282
+12	2547	7623642979379447	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	391558e9bc9e2e1d
+2548	2732	7623642981151367	C:/AR-BJ/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/703i3b6s/obj/arm64-v8a/libgame.so	af69af3ee74c3d5
