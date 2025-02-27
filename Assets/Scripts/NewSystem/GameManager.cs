@@ -19,17 +19,18 @@ public class GameManager : MonoBehaviour
     [Header("Textos")]
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI dealerScoreText;
-    [SerializeField] private TextMeshProUGUI cashText;
+    [SerializeField] public TextMeshProUGUI cashText;
     [SerializeField] private TextMeshProUGUI mainText;
     
     [Header("Scripts")]
     [SerializeField] private NewCardScript cardScript;
     [SerializeField] DeckScript deckScript;
+    [SerializeField] private BetScript betScript;
 
     [Header("Dinero")] 
-    [SerializeField] private int startMoney = 1000;
-    [SerializeField] private int moneyLeft;
-    [SerializeField] private int currentBet = 200; //MEJORAR LA LOGICA DE APOSTAR
+    [SerializeField] public int startMoney = 1000;
+    [SerializeField] public int moneyLeft;
+    [SerializeField] public int currentBet; 
     
     [Header("Cartas")]
     [SerializeField] private GameObject cardPrefab;
@@ -45,6 +46,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int timeBetweenMessages;
 
     [SerializeField] private int delay=2;
+    
+    [Header("Bets")]
+    [SerializeField] private GameObject betCanvas;
+    [SerializeField] private GameObject timerCanvas;
+    [SerializeField] private TMPro.TextMeshProUGUI timeText;
 
     //private int splitClicks;
     //private int dealerCards;
@@ -81,6 +87,12 @@ public class GameManager : MonoBehaviour
         dealerScoreText.gameObject.SetActive(false);  
         cashText.gameObject.SetActive(false);  
         mainText.gameObject.SetActive(true);
+        
+        betCanvas.gameObject.SetActive(false);
+        timerCanvas.gameObject.SetActive(false);
+        timeText.gameObject.SetActive(false);
+        
+        
         StartCoroutine(ShowMessage("Bienvenido al Blackjack AR", timeBetweenMessages, "Haga Click en Start"));
     }
     
@@ -99,7 +111,7 @@ public class GameManager : MonoBehaviour
         //dealerCards = 0;
         hitClicks = 0;
         moneyLeft = startMoney;
-        cashText.gameObject.SetActive(true);    
+        cashText.gameObject.SetActive(true);   
         
         StartRound();
         
@@ -114,6 +126,8 @@ public class GameManager : MonoBehaviour
         betButton.gameObject.SetActive(true);
         doubleButton.gameObject.SetActive(false);
         splitButton.gameObject.SetActive(false);
+        
+        
         
         StartCoroutine(ShowMessage("Apueste por favor", timeBetweenMessages, "APUESTE"));
         
@@ -136,19 +150,20 @@ public class GameManager : MonoBehaviour
         StartRound();
     }
 
-    void BetClicked()
+    public void BetClicked()
     {
-        dealButton.gameObject.SetActive(false);
-        bet = currentBet;   
-        moneyLeft = moneyLeft - bet;
-        cashText.text = moneyLeft.ToString();
-        dealButton.gameObject.SetActive(true);
-        StartCoroutine(ShowMessage("Su apuesta fue de" + bet, timeBetweenMessages, "Haga click en Repatir para comenzar"));
-        
-        
+        betCanvas.gameObject.SetActive(true);
+        timerCanvas.gameObject.SetActive(true);
+        timeText.gameObject.SetActive(true);
+
+        StartCoroutine(betScript.Bet()); // Inicia la corrutina correctamente
     }
+
+
+    
     void DealClicked()
     {
+        
         DrawCard(false);
         counter++;
 
