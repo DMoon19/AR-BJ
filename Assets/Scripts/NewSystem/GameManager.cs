@@ -231,11 +231,6 @@ public class GameManager : MonoBehaviour
 
         int hiddenCardRotation = 0;
 
-        if (counter == 3)
-        {
-            hiddenCardRotation = 180;
-        }
-        
         GameObject newCard = Instantiate(cardPrefab, isDealer ? distanceFromCardToCardDealer : distanceFromCardToCardPlayer, Quaternion.Euler(hiddenCardRotation, 90, 0));
         newCard.transform.SetParent(isDealer ? dealerCardSpawn : playerCardSpawn); // Asigna el padre
         if (isHidden)
