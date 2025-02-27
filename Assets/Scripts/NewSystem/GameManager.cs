@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
@@ -82,6 +83,7 @@ public class GameManager : MonoBehaviour
         startButton.onClick.AddListener(StartGame);
         dealButton.onClick.AddListener(DealClicked);
         hitButton.onClick.AddListener(HitClicked);
+        standButton.onClick.AddListener(StandClicked);
         doubleButton.onClick.AddListener(DoubleClicked);
         
         startButton.gameObject.SetActive(true);
@@ -529,5 +531,10 @@ public class GameManager : MonoBehaviour
         await Task.Delay(5000);
         Application.Quit();
 
+    }
+
+    private void Update()
+    {
+        print(isChupando);
     }
 }
