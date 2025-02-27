@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Carta
   - Mierda
+  - HiddenCard
   layers:
   - Default
   - TransparentFX
