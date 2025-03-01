@@ -19,12 +19,13 @@ public class BetScript : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _betText;
     [SerializeField] private Button _dealButton;
     [SerializeField] private Button _betButton;
+    [SerializeField] private Button _confirmButton;
 
     [SerializeField] private GameObject betCanvas;
     [SerializeField] private GameObject timerCanvas;
     [SerializeField] private TMPro.TextMeshProUGUI timeText;
     
-    
+    bool betConfirmed = false;
 
     private int bet = 0;
     private Coroutine timerCoroutine;
@@ -39,6 +40,8 @@ public class BetScript : MonoBehaviour
         _50000Button.onClick.AddListener(() => IncreaseBet(50000));
         _x2Button.onClick.AddListener(DoubleBet);
         _returnButton.onClick.AddListener(ResetBet);
+        _confirmButton.gameObject.SetActive(false);
+
     }
 
     private void IncreaseBet(int amount)
@@ -75,6 +78,7 @@ public class BetScript : MonoBehaviour
 
     public IEnumerator Bet()
     {
+        betConfirmed = false;
         _betButton.gameObject.SetActive(false);
         _dealButton.gameObject.SetActive(false);
 
@@ -83,10 +87,9 @@ public class BetScript : MonoBehaviour
             StopCoroutine(timerCoroutine);
         }
         timerCoroutine = StartCoroutine(StartTimer());
-
+        if (betConfirmed) yield break;
         yield return new WaitForSeconds(10f);
 
-        _dealButton.gameObject.SetActive(true);
 
         betCanvas.SetActive(false);
         timerCanvas.SetActive(false);
@@ -106,13 +109,44 @@ public class BetScript : MonoBehaviour
 
     private IEnumerator StartTimer()
     {
+
         int timeLeft = 10;
         while (timeLeft > 0)
         {
+            if (bet > 0) _confirmButton.gameObject.SetActive(true);
+                else _confirmButton.gameObject.SetActive(false);
             _timerText.text = $"{timeLeft}";
+        if (betConfirmed) yield break;
             yield return new WaitForSeconds(1f);
             timeLeft--;
         }
         _timerText.text = "0";
+    }
+
+    public void ConfirmBet()
+    {
+        betConfirmed = true;
+        print(bet + " " + _gameManager.moneyLeft);
+        _dealButton.gameObject.SetActive(true);
+        betCanvas.SetActive(false);
+        timerCanvas.SetActive(false);
+        timeText.gameObject.SetActive(false);
+        if (bet <= _gameManager.moneyLeft)
+        {
+            _gameManager.currentBet = bet;
+            Debug.Log("Apuesta confirmada"+_gameManager.currentBet);
+            _gameManager.moneyLeft -= _gameManager.currentBet;
+            Debug.Log("Apuesta confirmada 2 "+_gameManager.currentBet);
+
+
+            _gameManager.cashText.text = _gameManager.moneyLeft.ToString();
+            Debug.Log("Apuesta confirmada 3 "+_gameManager.currentBet);
+
+        }
+        else
+        {
+            Debug.Log("Error: Apuesta mayor al dinero disponible. Reiniciando apuesta.");
+            ResetBet();
+        }
     }
 }

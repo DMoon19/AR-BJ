@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI mainText;
     [SerializeField] private TextMeshProUGUI betText;
     [SerializeField] private TextMeshProUGUI betText2;
+    [SerializeField] private TextMesh scorePlayer;
+    [SerializeField] private TextMesh scoreDealer;
 
     [SerializeField] private GameObject panelbetwin;
     [SerializeField] private GameObject panelbettie;
@@ -79,6 +81,7 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
         counter = 0;
         startButton.onClick.AddListener(StartGame);
         dealButton.onClick.AddListener(DealClicked);
@@ -142,7 +145,8 @@ public class GameManager : MonoBehaviour
         
         cashText.text = moneyLeft.ToString();
         
-        dealerScoreText.text = dealerHandValue.ToString();
+        //dealerScoreText.text = dealerHandValue.ToString();
+        scoreDealer.text = dealerHandValue.ToString();
         
         if (moneyLeft == 0)
         {
@@ -198,8 +202,8 @@ public class GameManager : MonoBehaviour
         doubleButton.gameObject.SetActive(true);
         dealButton.gameObject.SetActive(false);
         mainText.gameObject.SetActive(false);
-        scoreText.gameObject.SetActive(true);  
-        dealerScoreText.gameObject.SetActive(true);
+        //scoreText.gameObject.SetActive(true);  
+        //dealerScoreText.gameObject.SetActive(true);
   
         if (playerHandValue == 21 )//BLACKJACK>>>>>>
         {
@@ -225,49 +229,46 @@ public class GameManager : MonoBehaviour
     private int hiddenCardValue;
     void DrawCard(bool isDealer, bool isHidden = false)
     {
-        distanceFromCardToCardDealer = dealerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
-        distanceFromCardToCardPlayer = playerCardSpawn.transform.position+ new Vector3(distance, 0, 0);
-        
+        int diosmio = 0;
+
+        distanceFromCardToCardDealer = dealerCardSpawn.transform.position + new Vector3(distance, 0, 0);
+        distanceFromCardToCardPlayer = playerCardSpawn.transform.position + new Vector3(distance, 0, 0);
 
         int hiddenCardRotation = 0;
-
         GameObject newCard = Instantiate(cardPrefab, isDealer ? distanceFromCardToCardDealer : distanceFromCardToCardPlayer, Quaternion.Euler(hiddenCardRotation, 90, 0));
-        newCard.transform.SetParent(isDealer ? dealerCardSpawn : playerCardSpawn); // Asigna el padre
+        newCard.transform.SetParent(isDealer ? dealerCardSpawn : playerCardSpawn);
+
         if (isHidden)
         {
             newCard.transform.rotation = Quaternion.Euler(180, 90, 0);
-            newCard.tag = "HiddenCard"; // Puedes usar otro tag, pero que sea único
+            newCard.tag = "HiddenCard";
         }
-        
-        newCard.transform.SetParent(isDealer ? dealerCardSpawn : playerCardSpawn);
-        
+
         NewCardScript cardScript = newCard.GetComponent<NewCardScript>();
         int cardValue = deckScript.DealCard(cardScript);
 
-        List<int> handCards = isDealer ? dealerHandCards : playerHandCards;
-        handCards.Add(cardValue);
-        
         if (isDealer)
         {
-            dealerHandCards.Add(cardValue);
+            dealerHandCards.Add(cardValue); // Ahora solo se añade una vez
+
             if (isHidden)
             {
                 hiddenCardValue = cardValue;
                 dealerHandValue -= cardValue;
             }
             dealerHandValue += cardValue;
+            scoreDealer.text = "" + dealerHandValue;
             AdjustAceValue(ref dealerHandValue, dealerHandCards);
-            dealerScoreText.text = "Dealer: " + dealerHandValue;
         }
         else
         {
-            playerHandCards.Add(cardValue);
+            playerHandCards.Add(cardValue); // Ahora solo se añade una vez
             playerHandValue += cardValue;
+            scorePlayer.text = "" + playerHandValue;
             AdjustAceValue(ref playerHandValue, playerHandCards);
-            scoreText.text = "Jugador: " + playerHandValue;
         }
-        
     }
+
 
 
     void HitClicked()
@@ -330,7 +331,9 @@ public class GameManager : MonoBehaviour
             // Ahora sí, sumamos su valor a la mano del dealer
             dealerHandValue += hiddenCardValue;
             AdjustAceValue(ref dealerHandValue, dealerHandCards);
-            dealerScoreText.text = "Dealer: " + dealerHandValue;
+            //dealerScoreText.text = "Dealer: " + dealerHandValue;
+            scoreDealer.text =""+ dealerHandValue;
+
         } 
      
         if (dealerHandValue <17)
@@ -351,15 +354,15 @@ public class GameManager : MonoBehaviour
             Debug.Log(dealerHandValue);
             Debug.Log(playerHandValue);
             if (isChupando) return;
-            Debug.Log("blackjack lose");
-            BlackJack();
+            Debug.Log("BJ LOSE (LOSE 1)");
+            BlackJack().ConfigureAwait(false);
         }
         if (dealerHandValue > 21)
         {
             Debug.Log(dealerHandValue);
             Debug.Log(playerHandValue);
             if (isChupando) return;
-            Debug.Log("WIN DEALERHANDVALUE >21");
+            Debug.Log("WIN DEALERHANDVALUE >21 (WIN 1)");
             Win().ConfigureAwait(false);
               
         }  
@@ -369,16 +372,16 @@ public class GameManager : MonoBehaviour
             Debug.Log(dealerHandValue);
             Debug.Log(playerHandValue);
             if (isChupando) return;
-            Debug.Log("WIN");
+            Debug.Log("WIN (WIN 2)");
             Win().ConfigureAwait(false);
            
         }
         if (playerHandValue <21 && playerHandValue < dealerHandValue && dealerHandValue < 22) //pierde
         {                   
-            Debug.Log(dealerHandValue);
-            Debug.Log(playerHandValue);
+            Debug.Log("LOSE3 "+dealerHandValue);
+            Debug.Log("LOSE3 "+playerHandValue);
             if (isChupando) return;
-            Debug.Log("LOSE");
+            Debug.Log("LOSE (LOSE 3)");
             Lose().ConfigureAwait(false); 
         }
 
@@ -422,7 +425,7 @@ public class GameManager : MonoBehaviour
         await Task.Delay(delay * 1000);
         if (mainText != null)
         {
-          Debug.Log("LOSE");
+          Debug.Log("LOSETASK");
         }
         await Task.Delay(delay * 500);
 
@@ -434,13 +437,17 @@ public class GameManager : MonoBehaviour
 
     private async Task Win()
     {
+        Debug.Log(currentBet);
+
         isChupando = true;
         await Task.Delay(delay*1000);
+        Debug.Log(currentBet);
 
         moneyLeft += (currentBet*2);
        // mainText.gameObject.SetActive(true);
        // mainText.text = "Felicitaciones, ganaste:" + (currentBet*2).ToString();
         panelbetwin.gameObject.SetActive(true);
+        Debug.Log(currentBet);
         betText.text = "$ " + (currentBet*2)+ " COP".ToString();
         audioSource.Play();
         
@@ -453,6 +460,7 @@ public class GameManager : MonoBehaviour
     {
         if (dealerHandValue == 21)
         {
+            Debug.Log("hola soy un bj pirata"+dealerHandValue);
             await Task.Delay(delay*1000);
             Lose();
         }
@@ -485,12 +493,17 @@ public class GameManager : MonoBehaviour
 
     private async Task EndRound()
     {
+        dealerHandCards.Clear();
+        playerHandCards.Clear();
         isChupando = false;
         playerHandValue = 0;
-        scoreText.text = playerHandValue.ToString();
+        //scoreText.text = playerHandValue.ToString();
+        scorePlayer.text =playerHandValue.ToString();
+
 
         dealerHandValue = 0;
-        dealerScoreText.text = dealerHandValue.ToString();
+        //dealerScoreText.text = dealerHandValue.ToString();
+        scoreDealer.text =dealerHandValue.ToString();
 
         hiddenCardValue = 0;
 
@@ -501,24 +514,30 @@ public class GameManager : MonoBehaviour
         DestroyAllSpawnedObjects();
     }
     
-    void AdjustAceValue(ref int handValue, List<int> handCards)
+    private void AdjustAceValue(ref int handValue, List<int> handCards)
     {
         int aceCount = 0;
+        int tempHandValue = 0;
 
         foreach (int card in handCards)
         {
-            if (card == 11) // Contar la cantidad de Ases en la mano
+            tempHandValue += card;
+            if (card == 11) 
             {
+                Debug.Log("carta "+card);
                 aceCount++;
             }
         }
 
-        while (handValue > 21 && aceCount > 0)
+        while (tempHandValue > 21 && aceCount > 0)
         {
-            handValue -= 10; // Cambiar un As de 11 a 1
+            tempHandValue -= 10;
             aceCount--;
         }
+        Debug.Log("tempHandValue "+tempHandValue);
+        handValue = tempHandValue;
     }
+
 
     private async Task EndGame()
     {
@@ -526,10 +545,5 @@ public class GameManager : MonoBehaviour
         await Task.Delay(5000);
         Application.Quit();
 
-    }
-
-    private void Update()
-    {
-        print(isChupando);
-    }
+    }   
 }
