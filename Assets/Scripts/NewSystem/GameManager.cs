@@ -73,6 +73,7 @@ public class GameManager : MonoBehaviour
     public float distance;
 
     private int counter;
+    private int hitCount = 0;
     
     private List<int> playerHandCards = new List<int>();
     private List<int> dealerHandCards = new List<int>();
@@ -195,7 +196,16 @@ public class GameManager : MonoBehaviour
         counter++;
 
         StartCoroutine(AddDistanceBetweenCards());
+        
 
+        if (playerHandValue == 21 )//BLACKJACK>>>>>>
+        {
+            BlackJack();
+            return;
+        }
+        
+        
+        
         hitButton.gameObject.SetActive(true);
         standButton.gameObject.SetActive(true);
         betButton.gameObject.SetActive(false);
@@ -205,10 +215,6 @@ public class GameManager : MonoBehaviour
         //scoreText.gameObject.SetActive(true);  
         //dealerScoreText.gameObject.SetActive(true);
   
-        if (playerHandValue == 21 )//BLACKJACK>>>>>>
-        {
-            BlackJack();
-        }
        
     }
 
@@ -216,20 +222,18 @@ public class GameManager : MonoBehaviour
     IEnumerator AddDistanceBetweenCards()
     {
         distance = distanceBetweenCards + distance; //-restingDistance;
-        
-        if (playerHandValue == 100)//ARREGLAR ESTA LOGICA
+        if (playerHandValue==100)
         {
-            restingDistance = distanceBetweenCards*hitClicks;
+            distanceBetweenCards -= distanceBetweenCards * hitCount;
+            distance += distanceBetweenCards;
         }
 
-        
-        yield return distance;
+        yield return distance; // Agrega un pequeño delay si lo necesitas
     }
 
     private int hiddenCardValue;
     void DrawCard(bool isDealer, bool isHidden = false)
     {
-        int diosmio = 0;
 
         distanceFromCardToCardDealer = dealerCardSpawn.transform.position + new Vector3(distance, 0, 0);
         distanceFromCardToCardPlayer = playerCardSpawn.transform.position + new Vector3(distance, 0, 0);
@@ -264,8 +268,8 @@ public class GameManager : MonoBehaviour
         {
             playerHandCards.Add(cardValue); // Ahora solo se añade una vez
             playerHandValue += cardValue;
-            scorePlayer.text = "" + playerHandValue;
             AdjustAceValue(ref playerHandValue, playerHandCards);
+            scorePlayer.text = "" + playerHandValue;
         }
     }
 
@@ -273,6 +277,7 @@ public class GameManager : MonoBehaviour
 
     void HitClicked()
     {
+
         doubleButton.gameObject.SetActive(false);
         splitButton.gameObject.SetActive(false);
         dealButton.gameObject.SetActive(false);
@@ -357,7 +362,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("BJ LOSE (LOSE 1)");
             BlackJack().ConfigureAwait(false);
         }
-        if (dealerHandValue > 21)
+        if (dealerHandValue > 21 && playerHandValue < 22)
         {
             Debug.Log(dealerHandValue);
             Debug.Log(playerHandValue);
@@ -394,34 +399,62 @@ public class GameManager : MonoBehaviour
 
             Tie().ConfigureAwait(false);
         }
+
+        if (playerHandValue > 21 && dealerHandValue > 21)
+        {
+            Debug.Log("Ambos pierden LOSE 4");
+            Lose().ConfigureAwait(false);
+        }
         isStanding = false;
     }
 
     void DoubleClicked()
     {
+        if (hitClicks > 0) // No permitir el double si ya se ha tomado otra carta
+        {
+            Debug.Log("No se puede doblar después de haber pedido una carta");
+            return;
+        }
+
         hitClicks++;
         DrawCard(false);
         StartCoroutine(AddDistanceBetweenCards());
 
+        // Ocultar botones después del double
         doubleButton.gameObject.SetActive(false);
         dealButton.gameObject.SetActive(false);
         hitButton.gameObject.SetActive(false);
         splitButton.gameObject.SetActive(false);
         standButton.gameObject.SetActive(false);
-        
-        moneyLeft = moneyLeft - bet;
+    
+        // Duplicar la apuesta
+        moneyLeft -= currentBet;
+        currentBet *= 2;
         cashText.text = moneyLeft.ToString();
-        
+    
+        // Llamar a la lógica de Stand después de doblar
         StandClicked();
     }
+
 
     private bool isLosing = false;
 
     private async Task Lose()
     {
-        if (isLosing) return;
-        isLosing = true;
-        isChupando = true;
+        standButton.gameObject.SetActive(false);
+        hitButton.gameObject.SetActive(false);
+        GameObject hiddenCard = GameObject.FindWithTag("HiddenCard");
+        if (hiddenCard != null)
+        {
+            hiddenCard.transform.rotation = Quaternion.Euler(0, -90, 0);
+
+            // Ahora sí, sumamos su valor a la mano del dealer
+            dealerHandValue += hiddenCardValue;
+            AdjustAceValue(ref dealerHandValue, dealerHandCards);
+            //dealerScoreText.text = "Dealer: " + dealerHandValue;
+            scoreDealer.text =""+ dealerHandValue;
+
+        } 
         await Task.Delay(delay * 1000);
         if (mainText != null)
         {
@@ -437,11 +470,8 @@ public class GameManager : MonoBehaviour
 
     private async Task Win()
     {
-        Debug.Log(currentBet);
 
-        isChupando = true;
         await Task.Delay(delay*1000);
-        Debug.Log(currentBet);
 
         moneyLeft += (currentBet*2);
        // mainText.gameObject.SetActive(true);
@@ -460,39 +490,126 @@ public class GameManager : MonoBehaviour
     {
         if (dealerHandValue == 21)
         {
-            Debug.Log("hola soy un bj pirata"+dealerHandValue);
-            await Task.Delay(delay*1000);
-            Lose();
-        }
-        else if (playerHandValue == 21)
-        {
-            moneyLeft = moneyLeft + (currentBet*3);
-            panelbetwin.gameObject.SetActive(true);
+            if (playerHandValue != 21)
+            {
+                await Task.Delay(delay*1000);
+                Debug.Log("BLACKJACK PLAYER LOSE");
+                Lose();
+            }
 
-            betText.text = "$ " + (currentBet*3) + " COP".ToString();
-            audioSource.Play();
-            await Task.Delay(delay * 1000);
+            else if (playerHandValue == 21)
+            {
+                standButton.gameObject.SetActive(false);
+                hitButton.gameObject.SetActive(false);
+                Debug.Log("BLACKJACK TIE");
+                Tie();
+                
+            }
+        }
+        else if (dealerHandValue > 21)
+        {
+            GameObject hiddenCard = GameObject.FindWithTag("HiddenCard");
+            if (hiddenCard != null)
+            {
+                standButton.gameObject.SetActive(false);
+                hitButton.gameObject.SetActive(false);
+                hiddenCard.transform.rotation = Quaternion.Euler(0, -90, 0);
+
+                // Ahora sí, sumamos su valor a la mano del dealer
+                dealerHandValue += hiddenCardValue;
+                AdjustAceValue(ref dealerHandValue, dealerHandCards);
+                //dealerScoreText.text = "Dealer: " + dealerHandValue;
+                scoreDealer.text =""+ dealerHandValue;
+                panelbetwin.gameObject.SetActive(true);
+                moneyLeft += currentBet*3;
+                betText.text = "$ " + (currentBet*3) + " COP".ToString();
+                audioSource.Play();
+
+                Debug.Log("BLACKJACK dealer bust");
+                
+            } 
+            await Task.Delay(delay*1000);
             panelbetwin.gameObject.SetActive(false);
 
-        EndRound();
+            EndRound();
+        }
+        else if(dealerHandValue < playerHandValue &&
+                playerHandValue == 21)
+        {
+            GameObject hiddenCard = GameObject.FindWithTag("HiddenCard");
+            if (hiddenCard != null)
+            {
+                hiddenCard.transform.rotation = Quaternion.Euler(0, -90, 0);
+                dealerHandValue += hiddenCardValue;
+                AdjustAceValue(ref dealerHandValue, dealerHandCards);
+                //dealerScoreText.text = "Dealer: " + dealerHandValue;
+                scoreDealer.text =""+ dealerHandValue;
+                
+                if (dealerHandValue >= 17) //Solo se voltea la carta
+                {
+                    standButton.gameObject.SetActive(false);
+                    hitButton.gameObject.SetActive(false);
+                    
+                    panelbetwin.gameObject.SetActive(true);
+                    moneyLeft += currentBet*3;
+                    betText.text = "$ " + (currentBet*3) + " COP".ToString();
+                    audioSource.Play();
+                    
+                    Debug.Log("BLACKJACK entre 17 y 20");
+                    await Task.Delay(delay*1000);
+                    panelbetwin.gameObject.SetActive(false);
+                    EndRound();
+                }
+                else if (dealerHandValue < 17) //Se voltea la carta y pide hasta empatar o perder
+                {
+                    
+                    DrawCard(isDealer: true, isHidden: false);
+                    BlackJack();
+                    panelbetwin.gameObject.SetActive(true);
+                    moneyLeft += currentBet*3;
+                    betText.text = "$ " + (currentBet*3) + " COP".ToString();
+                    audioSource.Play();
+                    Debug.Log("BLACKJACK menos a 17 ");
+
+                    await Task.Delay(delay*1000);
+                    panelbetwin.gameObject.SetActive(false);
+                    EndRound();
+                }
+
+
+            } 
+        
         }
     }
 
     private async Task Tie()
     {
-        moneyLeft += currentBet;
-        panelbettie.gameObject.SetActive(true);
+        GameObject hiddenCard = GameObject.FindWithTag("HiddenCard");
+        if (hiddenCard != null)
+        {
+            hiddenCard.transform.rotation = Quaternion.Euler(0, -90, 0);
 
-        betText2.text = "$ " + (currentBet) + " COP".ToString();
-        await Task.Delay(delay*1000); 
+            // Ahora sí, sumamos su valor a la mano del dealer
+            dealerHandValue += hiddenCardValue;
+            AdjustAceValue(ref dealerHandValue, dealerHandCards);
+            //dealerScoreText.text = "Dealer: " + dealerHandValue;
+            scoreDealer.text =""+ dealerHandValue;
+            panelbettie.gameObject.SetActive(true);
+            moneyLeft += currentBet;
+            betText2.text = "$ " + (currentBet) + " COP".ToString();
+            audioSource.Play();
+
+        } 
+        await Task.Delay(delay*1000);
         panelbettie.gameObject.SetActive(false);
 
         EndRound();
         
     }
 
-    private async Task EndRound()
+    public async Task EndRound()
     {
+        
         dealerHandCards.Clear();
         playerHandCards.Clear();
         isChupando = false;

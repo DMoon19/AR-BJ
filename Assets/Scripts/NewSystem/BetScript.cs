@@ -87,40 +87,38 @@ public class BetScript : MonoBehaviour
             StopCoroutine(timerCoroutine);
         }
         timerCoroutine = StartCoroutine(StartTimer());
-        if (betConfirmed) yield break;
-        yield return new WaitForSeconds(10f);
 
+        float elapsedTime = 0f;
+        while (elapsedTime < 10f && !betConfirmed)
+        {
+            yield return new WaitForSeconds(0.1f);
+            elapsedTime += 0.1f;
+        }
 
-        betCanvas.SetActive(false);
-        timerCanvas.SetActive(false);
-        timeText.gameObject.SetActive(false);
-        if (bet <= _gameManager.moneyLeft)
-        {
-            _gameManager.currentBet = bet;
-            _gameManager.moneyLeft -= _gameManager.currentBet;
-            _gameManager.cashText.text = _gameManager.moneyLeft.ToString();
-        }
-        else
-        {
-            Debug.Log("Error: Apuesta mayor al dinero disponible. Reiniciando apuesta.");
-            ResetBet();
-        }
+        if (!betConfirmed) ConfirmBet(); // Si no se confirmó manualmente, ejecuta ConfirmBet
+
+       
     }
 
     private IEnumerator StartTimer()
     {
-
         int timeLeft = 10;
-        while (timeLeft > 0)
+        while (timeLeft > 0 && !betConfirmed)
         {
-            if (bet > 0) _confirmButton.gameObject.SetActive(true);
-                else _confirmButton.gameObject.SetActive(false);
+            if (bet > 0)
+                _confirmButton.gameObject.SetActive(true);
+            else
+                _confirmButton.gameObject.SetActive(false);
+
             _timerText.text = $"{timeLeft}";
-        if (betConfirmed) yield break;
             yield return new WaitForSeconds(1f);
             timeLeft--;
         }
         _timerText.text = "0";
+        betCanvas.SetActive(false);
+        timerCanvas.SetActive(false);
+        timeText.gameObject.SetActive(false);
+        _gameManager.EndRound();
     }
 
     public void ConfirmBet()
